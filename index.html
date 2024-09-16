@@ -1,429 +1,355 @@
 ﻿<!DOCTYPE html>
 <html lang="en">
-	<head>
-		<meta charset="UTF-8">
-		<meta name="viewport" content="width=device-width">
-		<title>💰工资计算器💰</title>
-		<script src="vue.global.js"></script>
-		<style>
-			body {
-				display: grid;
-				place-items: center;
-			}
 
-			table {
-				min-width: 600px;
-				border-width: 0;
-				border-collapse: collapse;
-				font-family: Arial, sans-serif;
-			}
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width">
+	<title>💰工资计算器💰</title>
+	<script src="vue.global.js"></script>
+	<style>
+		body {
+			display: grid;
+			place-items: center;
+		}
 
-			th {
-				background-color: #f2f2f2;
-			}
+		table {
+			min-width: 600px;
+			border-width: 0;
+			border-collapse: collapse;
+			font-family: Arial, sans-serif;
+		}
 
-			td:hover {
-				background-color: #e3e5d5;
-			}
+		th {
+			background-color: #f2f2f2;
+		}
 
-			input {
-				border: solid #ccc;
-				border-radius: 3px;
-			}
+		td:hover {
+			background-color: #e3e5d5;
+		}
 
-			.inputNum {
-				width: 50px;
-				text-align: center;
-			}
+		input {
+			border: solid #ccc;
+			border-radius: 3px;
+		}
 
-			.inputCent {
-				width: 35px;
-				text-align: center;
-			}
+		.inputNum {
+			width: 50px;
+			text-align: center;
+		}
 
-			a {
-				color: #007bff;
-				text-decoration: none;
-			}
+		.inputCent {
+			width: 35px;
+			text-align: center;
+		}
 
-			a:hover {
-				text-decoration: underline;
+		a {
+			color: #007bff;
+			text-decoration: none;
+		}
+
+		a:hover {
+			text-decoration: underline;
+		}
+	</style>
+</head>
+
+<body>
+	<div id="app" align="center">
+		<h1>✨工资计算器✨</h1>
+		<hr>
+		<p>
+			税前月薪：<input style="font-weight: bold;" v-model.number="pay" class="inputNum"> 元 &emsp;
+			社保基数：<input style="font-weight: bold;" v-model.number="insurance" class="inputNum"> 元
+			&emsp;缴纳占比：{{缴纳占比}} %
+		</p>
+		<table>
+			<tr>
+				<td>税前月薪 ({{税前月薪}}元)</td>
+				<td>➕</td>
+				<td>公司社保 ({{公司社保}}元)</td>
+				<td>🟰</td>
+				<td>公司成本 ({{(公司成本)}}元)</td>
+			</tr>
+			<tr>
+				<td>税前月薪 ({{税前月薪}}元)</td>
+				<td>➖</td>
+				<td>个人社保 ({{个人社保}}元)</td>
+				<td>🟰</td>
+				<td>税后月薪 ({{税后月薪}}元)</td>
+			</tr>
+			<tr>
+				<td>税后月薪 ({{税后月薪}}元)</td>
+				<td>➖</td>
+				<td>个人所得税 ({{个人所得税}}元)</td>
+				<td>🟰</td>
+				<td><b>应到账月薪 ({{应到账月薪}}元)</b></td>
+			</tr>
+			<tr>
+				<td>应到账月薪 ({{应到账月薪}}元)</td>
+				<td>➕</td>
+				<td>公积金 ({{公积金}}元)</td>
+				<td>🟰</td>
+				<td>可支配收入 ({{可支配收入}}元)</td>
+			</tr>
+		</table>
+		<br>
+		<table border="1">
+			<tr>
+				<th>社保缴纳比例</th>
+				<th>公司</th>
+				<th>个人</th>
+				<th>合计</th>
+			</tr>
+			<tr>
+				<th>养老保险</th>
+				<td><input v-model.number="a1" class="inputCent">% ({{养老保险公司}}元)</td>
+				<td><input v-model.number="b1" class="inputCent">% ({{养老保险个人}}元)</td>
+				<td>{{ a1+b1 }}% ({{养老保险}}元)</td>
+			</tr>
+			<tr>
+				<th>医疗+生育</th>
+				<td><input v-model.number="a2" class="inputCent">% ({{医疗生育公司}}元)</td>
+				<td><input v-model.number="b2" class="inputCent">% ({{医疗生育个人}}元)</td>
+				<td>{{a2+b2}}% ({{医疗生育}}元)</td>
+			</tr>
+			<tr>
+				<th>失业保险</th>
+				<td><input v-model.number="a3" class="inputCent">% ({{失业保险公司}}元)</td>
+				<td><input v-model.number="b3" class="inputCent">% ({{失业保险个人}}元)</td>
+				<td>{{a3+b3}}% ({{失业保险}}元)</td>
+			</tr>
+			<tr>
+				<th>工伤保险</th>
+				<td><input v-model.number="a4" class="inputCent">% ({{工伤保险公司}}元)</td>
+				<td></td>
+				<td>{{a4}}% ({{工伤保险公司}}元)</td>
+			</tr>
+			<tr>
+				<th>公积金</th>
+				<td><input v-model.number="c" class="inputCent">% ({{公积金个人}}元)</td>
+				<td><input v-model.number="c" class="inputCent">% ({{公积金个人}}元)</td>
+				<td>{{c+c}}% ({{公积金}}元)</td>
+			</tr>
+			<tr>
+				<th>合计</th>
+				<td>{{公司社保比例}}% ({{公司社保}}元)</td>
+				<td>{{个人社保比例}}% ({{个人社保}}元)</td>
+				<td>{{(公司社保比例+个人社保比例).toFixed(2)}}% ({{社保}}元)</td>
+			</tr>
+		</table>
+		<br>
+		<table border="0">
+			<tr>
+				<td>税前月薪 ({{税前月薪}}元)</td>
+				<td>➗</td>
+				<td>月工作 <input v-model.number="workday" class="inputCent"> 天</td>
+				<td>🟰</td>
+				<td>税前日薪 ({{税前日薪}}元)</td>
+			</tr>
+			<tr>
+				<td>税后月薪 ({{税后月薪}}元)</td>
+				<td>➗</td>
+				<td>月工作 <input v-model.number="workday" class="inputCent"> 天</td>
+				<td>🟰</td>
+				<td>税后日薪 ({{税后日薪}}元)</td>
+			</tr>
+			<tr>
+				<td>税前日薪 ({{税前日薪}}元)</td>
+				<td>➗</td>
+				<td>日工作 <input v-model.number="workhour" class="inputCent"> 小时</td>
+				<td>🟰</td>
+				<td>税前时薪 ({{税前时薪}}元)</td>
+			</tr>
+			<tr>
+				<td>税后日薪 ({{税后日薪}}元)</td>
+				<td>➗</td>
+				<td>日工作 <input v-model.number="workhour" class="inputCent"> 小时</td>
+				<td>🟰</td>
+				<td>税后时薪 ({{税后时薪}}元)</td>
+			</tr>
+			<tr style="height: 8px;"> </tr>
+			<tr>
+				<td>税前日薪 ({{税前日薪}}元)</td>
+				<td>✖</td>
+				<td>请假 <input v-model.number="restday" class="inputCent"> 天</td>
+				<td>🟰</td>
+				<td>扣除月薪 ({{扣除月薪}}元)</td>
+			</tr>
+			<tr>
+				<td>税后月薪 ({{(税后月薪)}}元)</td>
+				<td>➖</td>
+				<td>扣除月薪 ({{扣除月薪}}元)</td>
+				<td>🟰</td>
+				<td>实到账月薪 ({{实到账月薪}}元)</td>
+			</tr>
+			<tr style="height: 8px;"> </tr>
+			<tr>
+				<td>税前月薪 ({{税前月薪}}元)</td>
+				<td>✖</td>
+				<td><input v-model.number="年月薪倍比" class="inputCent"> 薪</td>
+				<td>🟰</td>
+				<td>税前年薪 ({{(税前年薪)}}元)</td>
+			</tr>
+			<tr>
+				<td>应到账月薪 ({{应到账月薪}}元)</td>
+				<td>✖</td>
+				<td><input v-model.number="年月薪倍比" class="inputCent"> 薪</td>
+				<td>🟰</td>
+				<td>应到账年薪 ({{(应到账年薪)}}元)</td>
+			</tr>
+		</table>
+		<br>职工连续工作<b>刚满12个月的当年度</b>年假计算方法：<br>
+		入职工作一周年日期：<input type="date" v-model="工作一周年日期">；
+		连续工作时间(社交连续缴纳)：<input v-model="连续工作时间" class="inputCent"> 年
+		<br>当年度剩余日历天数({{当年度剩余日历天数}}天) ➗ 365 ✖ 全年应享年假天数({{全年应享年假天数}}天) 🟰 <b>年假({{(年假)}}天)</b>({{年假_保留两位小数}})
+		<hr>
+		<a href="http://sh.bendibao.com/zffw/2023630/274205.shtm">上海社保缴费标准（2024年）</a>
+		<br><a href="https://www.geshuiba.com/shuilvbiao/">个人所得税税率表（2024年）</a>
+		<br><br><b><a href="http://www.mohrss.gov.cn/">中华人民共和国人力资源和社会保障部</a></b>
+		<br><a href="http://www.mohrss.gov.cn/xxgk2020/fdzdgknr/zcfg/fl/202011/t20201102_394625.html">中华人民共和国劳动法</a>
+		<br><a href="http://www.mohrss.gov.cn/xxgk2020/fdzdgknr/zcfg/fl/202011/t20201102_394629.html">中华人民共和国社会保险法</a>
+		<br><a href="http://www.mohrss.gov.cn/xxgk2020/fdzdgknr/zcfg/fg/202011/t20201103_394935.html">国务院关于职工工作时间的规定</a>
+		<br><a href="http://www.mohrss.gov.cn/xxgk2020/fdzdgknr/zcfg/fg/202011/t20201103_394937.html">全国年节及纪念日放假办法</a>
+		<br><a href="http://www.mohrss.gov.cn/xxgk2020/gzk/gz/202112/t20211228_431596.html">企业职工带薪年休假实施办法</a>
+		<br><a
+			href="http://www.mohrss.gov.cn/xxgk2020/fdzdgknr/zcfg/gfxwj/ldgx/202011/t20201102_394696.html">关于职工全年月平均工作时间和工资折算问题的通知</a>
+		<br><br><b><a href="https://www.chinatax.gov.cn/">国家税务总局</a></b>：
+		<a
+			href="https://www.chinatax.gov.cn/n810219/n810744/n3752930/n3752974/c3963396/content.html">关于发布《个人所得税扣缴申报管理办法（试行）》的公告</a>
+	</div>
+	<script>
+		function rmZero(num) {
+			let decimalPart = (num % 1).toFixed(2).split('.')[1]; // 获取小数部分的位数
+			let decimalPlaces = decimalPart.length;
+			let result; // 根据小数部分的位数进行保留位数的处理
+			if (decimalPlaces === 0) {
+				result = parseInt(num); // 如果没有小数部分，输出整数部分
+			} else if (decimalPlaces === 1) {
+				result = parseFloat(num.toFixed(1)); // 如果有一位小数，保留一位小数
+			} else {
+				result = parseFloat(num.toFixed(2)); // 如果有多于一位小数，保留两位小数
 			}
-		</style>
-	</head>
-	<body>
-		<div id="app" align="center">
-			<h1>✨工资计算器✨</h1>
-			<hr>
-			<p>
-				税前月薪：<input style="font-weight: bold;" v-model.number="pay" class="inputNum"> 元 &emsp;
-				社保基数：<input style="font-weight: bold;" v-model.number="insurance" class="inputNum"> 元
-				&emsp;缴纳占比：{{缴纳占比}} %
-			</p>
-			<table>
-				<tr>
-					<td>税前月薪 ({{税前月薪}}元)</td>
-					<td>➕</td>
-					<td>公司社保 ({{公司社保}}元)</td>
-					<td>🟰</td>
-					<td>公司成本 ({{(公司成本)}}元)</td>
-				</tr>
-				<tr>
-					<td>税前月薪 ({{税前月薪}}元)</td>
-					<td>➖</td>
-					<td>个人社保 ({{个人社保}}元)</td>
-					<td>🟰</td>
-					<td>税后月薪 ({{税后月薪}}元)</td>
-				</tr>
-				<tr>
-					<td>税后月薪 ({{税后月薪}}元)</td>
-					<td>➖</td>
-					<td>个人所得税 ({{个人所得税}}元)</td>
-					<td>🟰</td>
-					<td><b>应到账月薪 ({{应到账月薪}}元)</b></td>
-				</tr>
-				<tr>
-					<td>应到账月薪 ({{应到账月薪}}元)</td>
-					<td>➕</td>
-					<td>公积金 ({{公积金}}元)</td>
-					<td>🟰</td>
-					<td>可支配收入 ({{可支配收入}}元)</td>
-				</tr>
-			</table>
-			<br>
-			<table border="1">
-				<tr>
-					<th>社保缴纳比例</th>
-					<th>公司</th>
-					<th>个人</th>
-					<th>合计</th>
-				</tr>
-				<tr>
-					<th>养老保险</th>
-					<td><input v-model.number="a1" class="inputCent">% ({{养老保险公司}}元)</td>
-					<td><input v-model.number="b1" class="inputCent">% ({{养老保险个人}}元)</td>
-					<td>{{ a1+b1 }}% ({{养老保险}}元)</td>
-				</tr>
-				<tr>
-					<th>医疗+生育</th>
-					<td><input v-model.number="a2" class="inputCent">% ({{医疗生育公司}}元)</td>
-					<td><input v-model.number="b2" class="inputCent">% ({{医疗生育个人}}元)</td>
-					<td>{{a2+b2}}% ({{医疗生育}}元)</td>
-				</tr>
-				<tr>
-					<th>失业保险</th>
-					<td><input v-model.number="a3" class="inputCent">% ({{失业保险公司}}元)</td>
-					<td><input v-model.number="b3" class="inputCent">% ({{失业保险个人}}元)</td>
-					<td>{{a3+b3}}% ({{失业保险}}元)</td>
-				</tr>
-				<tr>
-					<th>工伤保险</th>
-					<td><input v-model.number="a4" class="inputCent">% ({{工伤保险公司}}元)</td>
-					<td></td>
-					<td>{{a4}}% ({{工伤保险公司}}元)</td>
-				</tr>
-				<tr>
-					<th>公积金</th>
-					<td><input v-model.number="c" class="inputCent">% ({{公积金个人}}元)</td>
-					<td><input v-model.number="c" class="inputCent">% ({{公积金个人}}元)</td>
-					<td>{{c+c}}% ({{公积金}}元)</td>
-				</tr>
-				<tr>
-					<th>合计</th>
-					<td>{{公司社保比例}}% ({{公司社保}}元)</td>
-					<td>{{个人社保比例}}% ({{个人社保}}元)</td>
-					<td>{{(公司社保比例+个人社保比例).toFixed(2)}}% ({{社保}}元)</td>
-				</tr>
-			</table>
-			<br>
-			<table border="0">
-				<tr>
-					<td>税前月薪 ({{税前月薪}}元)</td>
-					<td>➗</td>
-					<td>月工作 <input v-model.number="workday" class="inputCent"> 天</td>
-					<td>🟰</td>
-					<td>税前日薪 ({{税前日薪}}元)</td>
-				</tr>
-				<tr>
-					<td>税后月薪 ({{税后月薪}}元)</td>
-					<td>➗</td>
-					<td>月工作 <input v-model.number="workday" class="inputCent"> 天</td>
-					<td>🟰</td>
-					<td>税后日薪 ({{税后日薪}}元)</td>
-				</tr>
-				<tr>
-					<td>税前日薪 ({{税前日薪}}元)</td>
-					<td>➗</td>
-					<td>日工作 <input v-model.number="workhour" class="inputCent"> 小时</td>
-					<td>🟰</td>
-					<td>税前时薪 ({{税前时薪}}元)</td>
-				</tr>
-				<tr>
-					<td>税后日薪 ({{税后日薪}}元)</td>
-					<td>➗</td>
-					<td>日工作 <input v-model.number="workhour" class="inputCent"> 小时</td>
-					<td>🟰</td>
-					<td>税后时薪 ({{税后时薪}}元)</td>
-				</tr>
-				<tr style="height: 8px;"> </tr>
-				<tr>
-					<td>税前日薪 ({{税前日薪}}元)</td>
-					<td>✖</td>
-					<td>请假 <input v-model.number="restday" class="inputCent"> 天</td>
-					<td>🟰</td>
-					<td>扣除月薪 ({{扣除月薪}}元)</td>
-				</tr>
-				<tr>
-					<td>税后月薪 ({{(税后月薪)}}元)</td>
-					<td>➖</td>
-					<td>扣除月薪 ({{扣除月薪}}元)</td>
-					<td>🟰</td>
-					<td>实到账月薪 ({{实到账月薪}}元)</td>
-				</tr>
-				<tr style="height: 8px;"> </tr>
-				<tr>
-					<td>税前月薪 ({{税前月薪}}元)</td>
-					<td>✖</td>
-					<td><input v-model.number="年月薪倍比" class="inputCent"> 薪</td>
-					<td>🟰</td>
-					<td>税前年薪 ({{(税前年薪)}}元)</td>
-				</tr>
-				<tr>
-					<td>应到账月薪 ({{应到账月薪}}元)</td>
-					<td>✖</td>
-					<td><input v-model.number="年月薪倍比" class="inputCent"> 薪</td>
-					<td>🟰</td>
-					<td>应到账年薪 ({{(应到账年薪)}}元)</td>
-				</tr>
-			</table>
-			<br>
-			连续工作时间：<input v-model.number="连续工作时间" class="inputCent"> 年
-			<br>
-			当年度剩余日历天数({{当年度剩余日历天数}}天) ➗ 365 ✖ 全年应享年假天数({{全年应享年假天数}}天) 🟰 <b>年假({{(年假)}}天)</b>({{年假_保留两位小数}})
-			<br>
-			<hr>
-			<a href="http://sh.bendibao.com/zffw/2023630/274205.shtm">上海社保缴费标准（2024年）</a>
-			<br><a href="https://www.geshuiba.com/shuilvbiao/">个人所得税税率表（2024年）</a>
-			<br><br><b><a href="http://www.mohrss.gov.cn/">中华人民共和国人力资源和社会保障部</a></b>
-			<br><a href="http://www.mohrss.gov.cn/xxgk2020/fdzdgknr/zcfg/fl/202011/t20201102_394625.html">中华人民共和国劳动法</a>
-			<br><a
-				href="http://www.mohrss.gov.cn/xxgk2020/fdzdgknr/zcfg/fl/202011/t20201102_394629.html">中华人民共和国社会保险法</a>
-			<br><a
-				href="http://www.mohrss.gov.cn/xxgk2020/fdzdgknr/zcfg/fg/202011/t20201103_394935.html">国务院关于职工工作时间的规定</a>
-			<br><a
-				href="http://www.mohrss.gov.cn/xxgk2020/fdzdgknr/zcfg/fg/202011/t20201103_394937.html">全国年节及纪念日放假办法</a>
-			<br><a href="http://www.mohrss.gov.cn/xxgk2020/gzk/gz/202112/t20211228_431596.html">企业职工带薪年休假实施办法</a>
-			<br><a
-				href="http://www.mohrss.gov.cn/xxgk2020/fdzdgknr/zcfg/gfxwj/ldgx/202011/t20201102_394696.html">关于职工全年月平均工作时间和工资折算问题的通知</a>
-			<br><br><b><a href="https://www.chinatax.gov.cn/">国家税务总局</a></b>：
-			<a
-				href="https://www.chinatax.gov.cn/n810219/n810744/n3752930/n3752974/c3963396/content.html">关于发布《个人所得税扣缴申报管理办法（试行）》的公告</a>
-		</div>
-		<script>
-			function rmZero(num) {
-				let decimalPart = (num % 1).toFixed(2).split('.')[1]; // 获取小数部分的位数
-				let decimalPlaces = decimalPart.length;
-				let result; // 根据小数部分的位数进行保留位数的处理
-				if (decimalPlaces === 0) {
-					result = parseInt(num); // 如果没有小数部分，输出整数部分
-				} else if (decimalPlaces === 1) {
-					result = parseFloat(num.toFixed(1)); // 如果有一位小数，保留一位小数
-				} else {
-					result = parseFloat(num.toFixed(2)); // 如果有多于一位小数，保留两位小数
+			return result;
+		}
+	</script>
+	<script>
+		const app = Vue.createApp({
+			data() {
+				return {
+					pay: 30000, //税前月薪
+					年月薪倍比: 12,
+					workday: 21, //月工作天数
+					restday: 0, //请假天数
+					workhour: 8, //日工作小时
+					taxstart: 5000, //个税起征点
+					insurance: 30000, //社保基数(7310<12183<36549,2023年7月1日-2024年6月30日,2023年度上海社保缴费标准)
+					a1: 16, //缴纳百分比-公司养老保险
+					b1: 8, //缴纳百分比-个人养老保险-
+					a2: 9, //缴纳百分比-公司医疗生育
+					b2: 2, //缴纳百分比-个人医疗生育
+					a3: 0.5, //缴纳百分比-公司失业保险
+					b3: 0.5, //缴纳百分比-个人失业保险
+					a4: 0.16, //缴纳百分比-公司工伤保险
+					c: 5, //缴纳百分比-公积金
+					连续工作时间: 1,
+					工作一周年日期: new Date(),
 				}
-				return result;
-			}
-		</script>
-		<script>
-			const app = Vue.createApp({
-				data() {
-					return {
-						pay: 30000, //税前月薪
-						年月薪倍比: 12,
-						workday: 21, //月工作天数
-						restday: 0, //请假天数
-						workhour: 8, //日工作小时
-						taxstart: 5000, //个税起征点
-						insurance: 30000, //社保基数(7310<12183<36549,2023年7月1日-2024年6月30日,2023年度上海社保缴费标准)
-						a1: 16, //缴纳百分比-公司养老保险
-						b1: 8, //缴纳百分比-个人养老保险-
-						a2: 10, //缴纳百分比-公司医疗生育
-						b2: 2, //缴纳百分比-个人医疗生育
-						a3: 0.5, //缴纳百分比-公司失业保险
-						b3: 0.5, //缴纳百分比-个人失业保险
-						a4: 0.16, //缴纳百分比-公司工伤保险
-						c: 5, //缴纳百分比-公积金
-						连续工作时间: 2,
+			},
+			computed: {
+				缴纳占比() { return rmZero(this.insurance / this.pay * 100); },
+				税前月薪() { return rmZero(this.pay); },
+				税前年薪() { return rmZero(this.税前月薪 * this.年月薪倍比); },
+				应到账年薪() { return rmZero(this.应到账月薪 * this.年月薪倍比); },
+				公司社保比例() { return rmZero(this.a1 + this.a2 + this.a3 + this.a4 + this.c); },
+				个人社保比例() { return rmZero(this.b1 + this.b2 + this.b3 + this.c); },
+				税后月薪() { return rmZero(this.pay - this.个人社保); },
+				税前日薪() { return rmZero(this.pay / this.workday); },
+				税后日薪() { return rmZero(this.税后月薪 / this.workday); },
+				个人所得税() {
+					/**
+					 * 				【个人所得税税率表（年）】
+					 * 级数		全（年）应纳税所得额			税率	速算扣除数
+					 * 1		不超过36000元的部分			3%		0
+					 * 2		超过 36000元至144000元的部分	10%		2520
+					 * 3		超过144000元至300000元的部分	20%		16920
+					 * 4		超过300000元至420000元的部分	25%		31920
+					 * 5		超过420000元至660000元的部分	30%		52920
+					 * 6		超过660000元至960000元的部分	35%		85920
+					 * 7		超过960000元的部分			45%		181920
+					 * 
+					 * 				【个人所得税税率表（月）】
+					 * 级数		全（月）应纳税所得额			税率	速算扣除数
+					 * 1		不超过3000元的部分			3%		0
+					 * 2		超过 3000元至12000元的部分	10%		210
+					 * 3		超过12000元至25000元的部分	20%		1410
+					 * 4		超过25000元至35000元的部分	25%		2660
+					 * 5		超过35000元至55000元的部分	30%		4410
+					 * 6		超过55000元至80000元的部分	35%		7160
+					 * 7		超过80000元的部分			45%		15160
+					 * 
+					 * 全月应纳税所得额 = 税前收入－个税起征点－专项扣除－专项附加扣除－依法确定的其他扣除，这里默认后两项为0，得到=>
+					 * 个人所得税 = (税后月薪－个税起征点)*税率
+					 */
+					var 全月应纳税所得额 = this.税后月薪 - this.taxstart;
+					var 税率 = 0;
+					var 速算扣除数 = 0;
+					if (全月应纳税所得额 < 0) {
+						税率 = 0; 速算扣除数 = 0;
+					} else if (全月应纳税所得额 <= 3000) {
+						税率 = 3; 速算扣除数 = 0;
+					} else if (全月应纳税所得额 <= 12000) {
+						税率 = 10; 速算扣除数 = 210;
+					} else if (全月应纳税所得额 <= 25000) {
+						税率 = 20; 速算扣除数 = 1410;
+					} else if (全月应纳税所得额 <= 35000) {
+						税率 = 25; 速算扣除数 = 2660;
+					} else if (全月应纳税所得额 <= 55000) {
+						税率 = 30; 速算扣除数 = 4410;
+					} else if (全月应纳税所得额 <= 80000) {
+						税率 = 35; 速算扣除数 = 7160;
+					} else {
+						税率 = 45; 速算扣除数 = 15160;
 					}
+					console.log("全月应纳税所得额：" + 全月应纳税所得额 + "，税率：" + 税率 + "%，速算扣除数：" + 速算扣除数);
+					return rmZero(全月应纳税所得额 * 税率 * 0.01 - 速算扣除数);
 				},
-				computed: {
-					缴纳占比() {
-						return rmZero(this.insurance / this.pay * 100);
-					},
-					税前月薪() {
-						return rmZero(this.pay);
-					},
-					税前年薪() {
-						return rmZero(this.税前月薪 * this.年月薪倍比);
-					},
-					应到账年薪() {
-						return rmZero(this.应到账月薪 * this.年月薪倍比);
-					},
-					公司社保比例() {
-						return rmZero(this.a1 + this.a2 + this.a3 + this.a4 + this.c);
-					},
-					个人社保比例() {
-						return rmZero(this.b1 + this.b2 + this.b3 + this.c);
-					},
-					税后月薪() {
-						return rmZero(this.pay - this.个人社保);
-					},
-					税前日薪() {
-						return rmZero(this.pay / this.workday);
-					},
-					税后日薪() {
-						return rmZero(this.税后月薪 / this.workday);
-					},
-					个人所得税() {
-						/**
-						 * 				【个人所得税税率表（年）】
-						 * 级数		全（年）应纳税所得额			税率	速算扣除数
-						 * 1		不超过36000元的部分			3%		0
-						 * 2		超过 36000元至144000元的部分	10%		2520
-						 * 3		超过144000元至300000元的部分	20%		16920
-						 * 4		超过300000元至420000元的部分	25%		31920
-						 * 5		超过420000元至660000元的部分	30%		52920
-						 * 6		超过660000元至960000元的部分	35%		85920
-						 * 7		超过960000元的部分			45%		181920
-						 * 
-						 * 				【个人所得税税率表（月）】
-						 * 级数		全（月）应纳税所得额			税率	速算扣除数
-						 * 1		不超过3000元的部分			3%		0
-						 * 2		超过 3000元至12000元的部分	10%		210
-						 * 3		超过12000元至25000元的部分	20%		1410
-						 * 4		超过25000元至35000元的部分	25%		2660
-						 * 5		超过35000元至55000元的部分	30%		4410
-						 * 6		超过55000元至80000元的部分	35%		7160
-						 * 7		超过80000元的部分			45%		15160
-						 * 
-						 * 全月应纳税所得额 = 税前收入－个税起征点－专项扣除－专项附加扣除－依法确定的其他扣除，这里默认后两项为0，得到=>
-						 * 个人所得税 = (税后月薪－个税起征点)*税率
-						 */
-						var 全月应纳税所得额 = this.税后月薪 - this.taxstart;
-						var 税率 = 0;
-						var 速算扣除数 = 0;
-						if (全月应纳税所得额 < 0) {
-							税率 = 0;
-							速算扣除数 = 0;
-						} else if (全月应纳税所得额 <= 3000) {
-							税率 = 3;
-							速算扣除数 = 0;
-						} else if (全月应纳税所得额 <= 12000) {
-							税率 = 10;
-							速算扣除数 = 210;
-						} else if (全月应纳税所得额 <= 25000) {
-							税率 = 20;
-							速算扣除数 = 1410;
-						} else if (全月应纳税所得额 <= 35000) {
-							税率 = 25;
-							速算扣除数 = 2660;
-						} else if (全月应纳税所得额 <= 55000) {
-							税率 = 30;
-							速算扣除数 = 4410;
-						} else if (全月应纳税所得额 <= 80000) {
-							税率 = 35;
-							速算扣除数 = 7160;
-						} else {
-							税率 = 45;
-							速算扣除数 = 15160;
-						}
-						console.log("全月应纳税所得额：" + 全月应纳税所得额 + "，税率：" + 税率 + "%，速算扣除数：" + 速算扣除数);
-						return rmZero(全月应纳税所得额 * 税率 * 0.01 - 速算扣除数);
-					},
-					应到账月薪() {
-						return rmZero(this.税后月薪 - this.个人所得税);
-					},
-					扣除月薪() {
-						return rmZero(this.税前日薪 * this.restday);
-					},
-					公司成本() {
-						return rmZero(this.公司社保 + this.pay);
-					},
-					可支配收入() {
-						return rmZero(this.应到账月薪 + this.公积金);
-					},
-					实到账月薪() {
-						return rmZero(this.税后月薪 - this.扣除月薪);
-					},
-					税前时薪() {
-						return rmZero(this.税前日薪 / this.workhour);
-					},
-					税后时薪() {
-						return rmZero(this.税后日薪 / this.workhour);
-					},
-					养老保险公司() {
-						return rmZero(this.a1 * this.insurance * 0.01);
-					},
-					养老保险个人() {
-						return rmZero(this.b1 * this.insurance * 0.01);
-					},
-					医疗生育公司() {
-						return rmZero(this.a2 * this.insurance * 0.01);
-					},
-					医疗生育个人() {
-						return rmZero(this.b2 * this.insurance * 0.01);
-					},
-					失业保险公司() {
-						return rmZero(this.a3 * this.insurance * 0.01);
-					},
-					失业保险个人() {
-						return rmZero(this.b3 * this.insurance * 0.01);
-					},
-					公积金个人() {
-						return rmZero(this.c * this.insurance * 0.01);
-					},
-					养老保险() {
-						return rmZero(this.养老保险公司 + this.养老保险个人);
-					},
-					医疗生育() {
-						return rmZero(this.医疗生育公司 + this.医疗生育个人);
-					},
-					失业保险() {
-						return rmZero(this.失业保险公司 + this.失业保险个人);
-					},
-					工伤保险公司() {
-						return rmZero(this.a4 * this.insurance * 0.01);
-					},
-					公积金() {
-						return rmZero(this.公积金个人 * 2);
-					},
-					公司社保() {
-						return rmZero(this.公司社保比例 * this.insurance * 0.01);
-					},
-					个人社保() {
-						return rmZero(this.个人社保比例 * this.insurance * 0.01);
-					},
-					社保() {
-						return rmZero(this.公司社保 + this.个人社保);
-					},
-					年假() {
-						return Math.floor(this.年假_保留两位小数);
-					},
-					当年度剩余日历天数() {
-						return Math.ceil((new Date(new Date().getFullYear(), 11, 31) - new Date()) / (1000 * 60 * 60 *
-							24));
-					},
-					年假_保留两位小数() {
-						return rmZero(this.当年度剩余日历天数 / 365 * this.全年应享年假天数);
-					},
-					全年应享年假天数() {
-						if (this.连续工作时间 < 1) return 0;
-						else if (this.连续工作时间 < 10) return 5;
-						else if (this.连续工作时间 < 20) return 10;
-						else return 15;
-					}
+				应到账月薪() { return rmZero(this.税后月薪 - this.个人所得税); },
+				扣除月薪() { return rmZero(this.税前日薪 * this.restday); },
+				公司成本() { return rmZero(this.公司社保 + this.pay); },
+				可支配收入() { return rmZero(this.应到账月薪 + this.公积金); },
+				实到账月薪() { return rmZero(this.税后月薪 - this.扣除月薪); },
+				税前时薪() { return rmZero(this.税前日薪 / this.workhour); },
+				税后时薪() { return rmZero(this.税后日薪 / this.workhour); },
+				养老保险公司() { return rmZero(this.a1 * this.insurance * 0.01); },
+				养老保险个人() { return rmZero(this.b1 * this.insurance * 0.01); },
+				医疗生育公司() { return rmZero(this.a2 * this.insurance * 0.01); },
+				医疗生育个人() { return rmZero(this.b2 * this.insurance * 0.01); },
+				失业保险公司() { return rmZero(this.a3 * this.insurance * 0.01); },
+				失业保险个人() { return rmZero(this.b3 * this.insurance * 0.01); },
+				公积金个人() { return rmZero(this.c * this.insurance * 0.01); },
+				养老保险() { return rmZero(this.养老保险公司 + this.养老保险个人); },
+				医疗生育() { return rmZero(this.医疗生育公司 + this.医疗生育个人); },
+				失业保险() { return rmZero(this.失业保险公司 + this.失业保险个人); },
+				工伤保险公司() { return rmZero(this.a4 * this.insurance * 0.01); },
+				公积金() { return rmZero(this.公积金个人 * 2); },
+				公司社保() { return rmZero(this.公司社保比例 * this.insurance * 0.01); },
+				个人社保() { return rmZero(this.个人社保比例 * this.insurance * 0.01); },
+				社保() { return rmZero(this.公司社保 + this.个人社保); },
+				年假() { return Math.floor(this.年假_保留两位小数); },
+				当年度剩余日历天数() {
+					return Math.ceil((new Date(new Date().getFullYear(), 11, 31) - new Date(this.工作一周年日期)) / (1000 * 60 * 60 * 24));
+				},
+				年假_保留两位小数() { return rmZero(this.当年度剩余日历天数 / 365 * this.全年应享年假天数); },
+				全年应享年假天数() {
+					if (this.连续工作时间 < 1) return 0;
+					else if (this.连续工作时间 < 10) return 5;
+					else if (this.连续工作时间 < 20) return 10;
+					else return 15;
 				}
-			}).mount('#app')
-		</script>
-	</body>
+			}
+		}).mount('#app')
+	</script>
+
+</body>
+
 </html>
